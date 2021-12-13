@@ -3,7 +3,6 @@
     <output-path>$PROJECT_DIR$/out/artifacts/DynamicShop_jar</output-path>
     <root id="archive" name="DynamicShop.jar">
       <element id="module-output" name="DynamicShop" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../intellij projects/minecraft mods/spigot-api-1.18.1-R0.1-20211210.132813-1.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
