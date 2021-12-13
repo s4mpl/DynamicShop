@@ -1,9 +1,6 @@
 package me.tareqalyousef.dynamicshop;
 
-import me.tareqalyousef.dynamicshop.commands.BalanceCommand;
-import me.tareqalyousef.dynamicshop.commands.BuyCommand;
-import me.tareqalyousef.dynamicshop.commands.LeaderboardCommand;
-import me.tareqalyousef.dynamicshop.commands.SellCommand;
+import me.tareqalyousef.dynamicshop.commands.*;
 import me.tareqalyousef.dynamicshop.listeners.JoinListener;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -24,6 +21,7 @@ public class DynamicShop extends JavaPlugin {
         this.getCommand("sell").setExecutor(new SellCommand(this));
         this.getCommand("balance").setExecutor(new BalanceCommand(this));
         this.getCommand("leaderboard").setExecutor(new LeaderboardCommand(this));
+        this.getCommand("price").setExecutor(new PriceCommand(this));
 
         // listeners
         getServer().getPluginManager().registerEvents(new JoinListener(this), this);
