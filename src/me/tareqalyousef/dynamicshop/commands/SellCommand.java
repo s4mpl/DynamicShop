@@ -42,25 +42,22 @@ public class SellCommand implements CommandExecutor {
             name = type.toString().toLowerCase();
             content = new ItemStack(type, 1);
         } catch (Exception e) {
-            player.sendMessage(Util.PREFIX_COLOR +
-                    plugin.getConfig().getString("prefix") +
-                    Util.DEFAULT_COLOR +
-                    " Could not parse command");
-
+            player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " Could not parse command");
             return false;
         }
 
         if (amount <= 0) {
-            player.sendMessage(Util.PREFIX_COLOR +
-                    plugin.getConfig().getString("prefix") +
-                    Util.DEFAULT_COLOR +
-                    " Must be a positive value");
-
+            player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " Must be a positive value");
             return true;
         }
 
         pricePerUnit = Util.getItemPrice(type.toString());
         playerBalance = Util.getPlayerBalance(player.getUniqueId().toString());
+
+        if (pricePerUnit == -1) {
+            player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " You cannot sell this item");
+            return true;
+        }
 
         // Check if the player has the amount of items
         for (ItemStack i : player.getInventory().getContents()) {
@@ -73,16 +70,8 @@ public class SellCommand implements CommandExecutor {
         }
 
         if (actualAmount < amount) {
-            player.sendMessage(Util.PREFIX_COLOR +
-                    plugin.getConfig().getString("prefix") +
-                    Util.DEFAULT_COLOR +
-                    " You do not have " +
-                    Util.HIGHLIGHT_COLOR +
-                    String.valueOf(amount) +
-                    Util.DEFAULT_COLOR +
-                    " " +
-                    Util.HIGHLIGHT_COLOR +
-                    name);
+            player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " You do not have " +
+                    Settings.HIGHLIGHT_COLOR + String.valueOf(amount) + Settings.DEFAULT_COLOR + " " + Settings.HIGHLIGHT_COLOR + name);
         }
 
         // Optimize to only sell as many as the player has
@@ -92,12 +81,14 @@ public class SellCommand implements CommandExecutor {
             Util.setPlayerBalance(player.getUniqueId().toString(), playerBalance + Settings.SALES_TAX * pricePerUnit);
         }
 
-        totalPrice = actualAmount * pricePerUnit * Settings.SALES_TAX;
-        player.sendMessage(Util.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Util.DEFAULT_COLOR + " Sold " +
-                Util.HIGHLIGHT_COLOR + String.valueOf(actualAmount) + Util.DEFAULT_COLOR + " " + Util.HIGHLIGHT_COLOR + name +
-                Util.DEFAULT_COLOR + " for " + Util.MONEY_COLOR + "$" + String.format("%.2f", totalPrice) + Util.DEFAULT_COLOR + " (" +
-                Util.MONEY_COLOR + "$" + String.format("%.2f", pricePerUnit) + Util.DEFAULT_COLOR + " each at " +
-                Util.HIGHLIGHT_COLOR + String.valueOf(Settings.SALES_TAX * 100) + "%" + Util.DEFAULT_COLOR + " market value)");
+        if (actualAmount > 0) {
+            totalPrice = actualAmount * pricePerUnit * Settings.SALES_TAX;
+            player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " Sold " +
+                    Settings.HIGHLIGHT_COLOR + String.valueOf(actualAmount) + Settings.DEFAULT_COLOR + " " + Settings.HIGHLIGHT_COLOR + name +
+                    Settings.DEFAULT_COLOR + " for " + Settings.MONEY_COLOR + "$" + String.format("%.2f", totalPrice) + Settings.DEFAULT_COLOR + " (" +
+                    Settings.MONEY_COLOR + "$" + String.format("%.2f", pricePerUnit) + Settings.DEFAULT_COLOR + " each at " +
+                    Settings.HIGHLIGHT_COLOR + String.format("%.2f", Settings.SALES_TAX * 100) + "%" + Settings.DEFAULT_COLOR + " market value)");
+        }
 
         return true;
     }

@@ -10,8 +10,10 @@ commands:
   sell:
     description: Sell an item to the global shop.
   balance:
+    aliases: [bal]
     description: Check your balance.
   leaderboard:
+    aliases: [baltop]
     description: Check the highest balances on the server.
   price:
     description: Check the price of an item.

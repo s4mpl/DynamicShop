@@ -1,6 +1,7 @@
 package me.tareqalyousef.dynamicshop.commands;
 
 import me.tareqalyousef.dynamicshop.DynamicShop;
+import me.tareqalyousef.dynamicshop.Settings;
 import me.tareqalyousef.dynamicshop.Util;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -41,27 +42,21 @@ public class BuyCommand implements CommandExecutor {
             name = type.toString().toLowerCase();
             content = new ItemStack(type, Math.min(amount, type.getMaxStackSize()));
         } catch (Exception e) {
-            player.sendMessage(Util.PREFIX_COLOR +
-                    plugin.getConfig().getString("prefix") +
-                    Util.DEFAULT_COLOR +
-                    " Could not parse command");
+            player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " Could not parse command");
 
             return false;
         }
 
         if (amount <= 0) {
-            player.sendMessage(Util.PREFIX_COLOR +
-                    plugin.getConfig().getString("prefix") +
-                    Util.DEFAULT_COLOR +
-                    " Must be a positive value");
+            player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " Must be a positive value");
 
             return true;
         }
 
         if(amount > type.getMaxStackSize() * 16) {
-            player.sendMessage(Util.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Util.DEFAULT_COLOR +
-                    " Cannot buy more than " + Util.HIGHLIGHT_COLOR + String.valueOf(type.getMaxStackSize() * 16) + " " +
-                    name +Util.DEFAULT_COLOR + " at a time");
+            player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR +
+                    " Cannot buy more than " + Settings.HIGHLIGHT_COLOR + String.valueOf(type.getMaxStackSize() * 16) + " " +
+                    name + Settings.DEFAULT_COLOR + " at a time");
 
             return true;
         }
@@ -70,9 +65,14 @@ public class BuyCommand implements CommandExecutor {
         totalPrice = amount * pricePerUnit;
         playerBalance = Util.getPlayerBalance(player.getUniqueId().toString());
 
+        if (pricePerUnit == -1) {
+            player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " You cannot sell this item");
+            return true;
+        }
+
         if (playerBalance < totalPrice) {
-            player.sendMessage(Util.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Util.DEFAULT_COLOR +
-                    " You do not have " + Util.MONEY_COLOR + String.format("$%.2f", totalPrice));
+            player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " You do not have " +
+                    Settings.MONEY_COLOR + String.format("$%.2f", totalPrice));
 
             return true;
         }
@@ -82,12 +82,13 @@ public class BuyCommand implements CommandExecutor {
             amountDropped += content.getAmount();
             content.setAmount(Math.min(amount - amountDropped, type.getMaxStackSize()));
         }
+
         Util.setPlayerBalance(player.getUniqueId().toString(), playerBalance - totalPrice);
 
-        player.sendMessage(Util.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Util.DEFAULT_COLOR + " Bought " +
-                Util.HIGHLIGHT_COLOR + String.valueOf(amount) + Util.DEFAULT_COLOR + " " + Util.HIGHLIGHT_COLOR + name +
-                Util.DEFAULT_COLOR + " for " + Util.MONEY_COLOR + "$" + String.format("%.2f", totalPrice) + Util.DEFAULT_COLOR + " (" +
-                Util.MONEY_COLOR + "$" + String.format("%.2f", pricePerUnit) + Util.DEFAULT_COLOR + " each)");
+        player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " Bought " +
+                Settings.HIGHLIGHT_COLOR + String.valueOf(amount) + Settings.DEFAULT_COLOR + " " + Settings.HIGHLIGHT_COLOR + name +
+                Settings.DEFAULT_COLOR + " for " + Settings.MONEY_COLOR + "$" + String.format("%.2f", totalPrice) + Settings.DEFAULT_COLOR + " (" +
+                Settings.MONEY_COLOR + "$" + String.format("%.2f", pricePerUnit) + Settings.DEFAULT_COLOR + " each)");
 
         return true;
     }

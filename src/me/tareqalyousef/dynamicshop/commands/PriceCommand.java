@@ -1,6 +1,7 @@
 package me.tareqalyousef.dynamicshop.commands;
 
 import me.tareqalyousef.dynamicshop.DynamicShop;
+import me.tareqalyousef.dynamicshop.Settings;
 import me.tareqalyousef.dynamicshop.Util;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -27,17 +28,18 @@ public class PriceCommand implements CommandExecutor {
         try {
             type = Material.getMaterial(strings[0].toUpperCase());
             price = Util.getItemPrice(type.toString());
-        } catch (Exception e) {
-            player.sendMessage(Util.PREFIX_COLOR +
-                    plugin.getConfig().getString("prefix") +
-                    Util.DEFAULT_COLOR +
-                    " Could not parse command");
 
+            if (price == -1) {
+                player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " You cannot sell this item");
+                return true;
+            }
+        } catch (Exception e) {
+            player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " Could not parse command");
             return false;
         }
 
-        player.sendMessage(Util.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Util.DEFAULT_COLOR + " The price of " +
-                Util.HIGHLIGHT_COLOR + strings[0].toLowerCase() + Util.DEFAULT_COLOR + " is " + Util.MONEY_COLOR + String.format("$%.2f", price));
+        player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " The price of " +
+                Settings.HIGHLIGHT_COLOR + strings[0].toLowerCase() + Settings.DEFAULT_COLOR + " is " + Settings.MONEY_COLOR + String.format("$%.2f", price));
 
         return true;
     }

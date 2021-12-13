@@ -1,6 +1,7 @@
 package me.tareqalyousef.dynamicshop.commands;
 
 import me.tareqalyousef.dynamicshop.DynamicShop;
+import me.tareqalyousef.dynamicshop.Settings;
 import me.tareqalyousef.dynamicshop.Util;
 
 import org.bukkit.command.Command;
@@ -47,20 +48,11 @@ public class LeaderboardCommand implements CommandExecutor {
                 .collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue(),
                         (entry1, entry2) -> entry2, LinkedHashMap::new));
 
-        player.sendMessage(Util.PREFIX_COLOR +
-                plugin.getConfig().getString("prefix") +
-                Util.DEFAULT_COLOR +
-                " Leaderboard ");
+        player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " Leaderboard ");
 
         int place = 1;
         for (String name : balances.keySet()) {
-            player.sendMessage(Util.HIGHLIGHT_COLOR +
-                    String.valueOf(place) +
-                    ") " +
-                    Util.DEFAULT_COLOR +
-                    name +
-                    " " +
-                    Util.MONEY_COLOR +
+            player.sendMessage(Settings.HIGHLIGHT_COLOR + String.valueOf(place) + ") " + Settings.DEFAULT_COLOR + name + " " + Settings.MONEY_COLOR +
                     String.format("$%.2f", balances.get(name)));
 
             if (place == 9)

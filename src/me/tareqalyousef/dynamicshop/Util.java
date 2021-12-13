@@ -7,25 +7,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
+import java.io.*;
 import java.util.HashMap;
 
 import static org.bukkit.Bukkit.getServer;
 
 public class Util {
-    public static String DATA_PATH = getServer().getWorldContainer() + "/plugins/DynamicShop";
-    public static String BALANCES_PATH = DATA_PATH + "/balances.yml";
-    public static String DEFAULT_PRICES_PATH = DATA_PATH + "/defaults.yml";
-    public static String CURRENT_PRICES_PATH = DATA_PATH + "/prices.yml";
-    public static String ALIASES_PATH = DATA_PATH + "/aliases.yml";
-
-    public static final ChatColor PREFIX_COLOR = ChatColor.DARK_BLUE;
-    public static final ChatColor DEFAULT_COLOR = ChatColor.GRAY;
-    public static final ChatColor HIGHLIGHT_COLOR = ChatColor.YELLOW;
-    public static final ChatColor MONEY_COLOR = ChatColor.GREEN;
-
     public static File getBalancesFile() {
-        File file = new File(BALANCES_PATH);
+        File file = new File(Settings.BALANCES_PATH);
 
         if (!file.exists())
             throw new RuntimeException("Failed to load balances config");
@@ -34,7 +23,7 @@ public class Util {
     }
 
     public static File getDefaultPricesFile() {
-        File file = new File(DEFAULT_PRICES_PATH);
+        File file = new File(Settings.DEFAULT_PRICES_PATH);
 
         if (!file.exists())
             throw new RuntimeException("Failed to load default prices config");
@@ -43,7 +32,7 @@ public class Util {
     }
 
     public static File getAliasesFile() {
-        File file = new File(ALIASES_PATH);
+        File file = new File(Settings.ALIASES_PATH);
 
         if (!file.exists())
             throw new RuntimeException("Failed to load aliases config");
@@ -52,7 +41,7 @@ public class Util {
     }
 
     public static File getCurrentPricesFile() {
-        File file = new File(CURRENT_PRICES_PATH);
+        File file = new File(Settings.CURRENT_PRICES_PATH);
 
         if (!file.exists())
             throw new RuntimeException("Failed to load current prices config");
@@ -104,7 +93,7 @@ public class Util {
     }
 
     public static void createDefaultPricesFile() {
-        File defaults = new File(Util.DEFAULT_PRICES_PATH);
+        File defaults = new File(Settings.DEFAULT_PRICES_PATH);
 
         try{
             defaults.createNewFile();
@@ -112,11 +101,31 @@ public class Util {
             Bukkit.getLogger().info("Could not create default prices file");
         }
 
-        // todo: data
+        YamlConfiguration defaultsConfig = YamlConfiguration.loadConfiguration(Util.getDefaultPricesFile());
+
+        try {
+            InputStream input = Util.class.getClassLoader().getResourceAsStream("defaults.txt");
+            InputStreamReader streamReader = new InputStreamReader(input, "UTF-8");
+            BufferedReader in = new BufferedReader(streamReader);
+
+            for (String line; (line = in.readLine()) != null;) {
+                String[] content = line.split(":");
+                defaultsConfig.set(content[0], Double.parseDouble(content[1]));
+            }
+
+        } catch (Exception e) {
+            Bukkit.getLogger().info("Could not write to defaults.yml");
+        }
+
+        try {
+            defaultsConfig.save(defaults);
+        } catch (Exception exception) {
+            Bukkit.getLogger().info("Could not save defaults.yml");
+        }
     }
 
     public static void createCurrentPricesFile() {
-        File prices = new File(Util.CURRENT_PRICES_PATH);
+        File prices = new File(Settings.CURRENT_PRICES_PATH);
 
         try{
             prices.createNewFile();
@@ -168,7 +177,7 @@ public class Util {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(prices);
 
         if (!config.contains(materialName))
-            throw new RuntimeException("Requested material does not exist");
+            return -1;
 
         return config.getDouble(materialName);
     }

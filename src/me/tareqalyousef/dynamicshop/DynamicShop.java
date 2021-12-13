@@ -35,11 +35,11 @@ public class DynamicShop extends JavaPlugin {
     }
 
     public void verifyDirectories() {
-        File data = new File(Util.DATA_PATH);
-        File balances = new File(Util.BALANCES_PATH);
-        File defaults = new File(Util.DEFAULT_PRICES_PATH);
-        File prices = new File(Util.CURRENT_PRICES_PATH);
-        File aliases = new File(Util.ALIASES_PATH);
+        File data = new File(Settings.DATA_PATH);
+        File balances = new File(Settings.BALANCES_PATH);
+        File defaults = new File(Settings.DEFAULT_PRICES_PATH);
+        File prices = new File(Settings.CURRENT_PRICES_PATH);
+        File aliases = new File(Settings.ALIASES_PATH);
 
         try {
             if (!data.exists()) data.mkdir();
