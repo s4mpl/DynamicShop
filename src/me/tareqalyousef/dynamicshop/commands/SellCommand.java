@@ -25,6 +25,8 @@ public class SellCommand implements CommandExecutor {
         Player player = (Player)commandSender;
 
         int amount;
+        double pricePerUnit;
+        double totalPrice;
         Material type;
         ItemStack content;
 
@@ -40,6 +42,8 @@ public class SellCommand implements CommandExecutor {
 
             return false;
         }
+        pricePerUnit = Utilities.GetItemPrice(type.toString().toUpperCase());
+        totalPrice = amount * pricePerUnit;
 
         if (!player.getInventory().contains(content)) {
             player.sendMessage(Utilities.PREFIX_COLOR +
@@ -49,13 +53,14 @@ public class SellCommand implements CommandExecutor {
                     Utilities.HIGHLIGHT_COLOR +
                     String.valueOf(amount) +
                     Utilities.DEFAULT_COLOR +
-                    " quantity of " +
+                    " " +
                     Utilities.HIGHLIGHT_COLOR +
                     type.toString());
 
             return true;
         }
         player.getInventory().removeItem(content);
+        // add to player balance
 
         player.sendMessage(Utilities.PREFIX_COLOR +
                 plugin.getConfig().getString("prefix") +
@@ -64,13 +69,19 @@ public class SellCommand implements CommandExecutor {
                 Utilities.HIGHLIGHT_COLOR +
                 String.valueOf(amount) +
                 Utilities.DEFAULT_COLOR +
-                " quantity of " +
+                " " +
                 Utilities.HIGHLIGHT_COLOR +
                 type.toString() +
                 Utilities.DEFAULT_COLOR +
-                " for " +
+                " for $" +
                 Utilities.HIGHLIGHT_COLOR +
-                "$20.00");
+                String.valueOf(totalPrice) +
+                Utilities.DEFAULT_COLOR +
+                " ($" +
+                Utilities.HIGHLIGHT_COLOR +
+                String.valueOf(pricePerUnit) +
+                Utilities.DEFAULT_COLOR +
+                " each)");
 
         return true;
     }

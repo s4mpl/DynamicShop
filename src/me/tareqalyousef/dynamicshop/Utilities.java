@@ -40,4 +40,23 @@ public class Utilities {
 
         return config.getDouble(playerId);
     }
+
+    public static File GetCurrentPricesConfig() {
+        File file = new File(getServer().getWorldContainer() + "/plugins/DynamicShop/prices.yml");
+
+        if (!file.exists())
+            throw new RuntimeException("Failed to load current prices config!");
+
+        return file;
+    }
+
+    public static double GetItemPrice(String materialName) {
+        File prices = Utilities.GetCurrentPricesConfig();
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(prices);
+
+        if (!config.contains(materialName))
+            throw new RuntimeException("Requested material does not exist!");
+
+        return config.getDouble(materialName);
+    }
 }

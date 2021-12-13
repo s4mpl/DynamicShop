@@ -25,6 +25,8 @@ public class BuyCommand implements CommandExecutor {
         Player player = (Player)commandSender;
 
         int amount;
+        double pricePerUnit;
+        double totalPrice;
         Material type;
         ItemStack content;
 
@@ -40,9 +42,23 @@ public class BuyCommand implements CommandExecutor {
 
             return false;
         }
+        pricePerUnit = Utilities.GetItemPrice(type.toString().toUpperCase());
+        totalPrice = amount * pricePerUnit;
 
+        if (!(Utilities.GetPlayerBalance(player.getUniqueId().toString()) < totalPrice)) {
+            player.sendMessage(Utilities.PREFIX_COLOR +
+                    plugin.getConfig().getString("prefix") +
+                    Utilities.DEFAULT_COLOR +
+                    " You do not have " +
+                    Utilities.HIGHLIGHT_COLOR +
+                    String.valueOf(totalPrice));
+
+            return true;
+        }
         player.getInventory().addItem(content);
         player.getWorld().dropItemNaturally(player.getLocation(), content);
+        // subtract from player balance
+
         player.sendMessage(Utilities.PREFIX_COLOR +
                 plugin.getConfig().getString("prefix") +
                 Utilities.DEFAULT_COLOR +
@@ -50,13 +66,19 @@ public class BuyCommand implements CommandExecutor {
                 Utilities.HIGHLIGHT_COLOR +
                 String.valueOf(amount) +
                 Utilities.DEFAULT_COLOR +
-                " quantity of " +
+                " " +
                 Utilities.HIGHLIGHT_COLOR +
                 type.toString() +
                 Utilities.DEFAULT_COLOR +
-                " for " +
+                " for $" +
                 Utilities.HIGHLIGHT_COLOR +
-                "$20.00");
+                String.valueOf(totalPrice) +
+                Utilities.DEFAULT_COLOR +
+                " ($" +
+                Utilities.HIGHLIGHT_COLOR +
+                String.valueOf(pricePerUnit) +
+                Utilities.DEFAULT_COLOR +
+                " each)");
 
         return true;
     }
