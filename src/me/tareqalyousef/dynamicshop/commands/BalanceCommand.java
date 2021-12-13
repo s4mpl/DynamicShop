@@ -1,8 +1,7 @@
 package me.tareqalyousef.dynamicshop.commands;
 
 import me.tareqalyousef.dynamicshop.DynamicShop;
-import me.tareqalyousef.dynamicshop.Utilities;
-import org.bukkit.ChatColor;
+import me.tareqalyousef.dynamicshop.Util;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -21,14 +20,11 @@ public class BalanceCommand implements CommandExecutor {
             return true;
 
         Player player = (Player)commandSender;
-        double balance = Utilities.getPlayerBalance(player.getUniqueId().toString());
+        double balance = Util.getPlayerBalance(player.getUniqueId().toString());
 
-        player.sendMessage(Utilities.PREFIX_COLOR +
-                           plugin.getConfig().getString("prefix") +
-                           Utilities.DEFAULT_COLOR +
-                           " You have a balance of " +
-                           Utilities.HIGHLIGHT_COLOR +
-                           String.format("$%.2f", balance));
+        player.sendMessage(Util.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Util.DEFAULT_COLOR +
+                " You have a balance of " + Util.MONEY_COLOR + String.format("$%.2f", balance));
+
         return true;
     }
 }

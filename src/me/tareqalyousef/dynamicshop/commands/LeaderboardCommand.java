@@ -1,9 +1,8 @@
 package me.tareqalyousef.dynamicshop.commands;
 
 import me.tareqalyousef.dynamicshop.DynamicShop;
-import me.tareqalyousef.dynamicshop.Utilities;
+import me.tareqalyousef.dynamicshop.Util;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -31,8 +30,8 @@ public class LeaderboardCommand implements CommandExecutor {
 
         Player player = (Player)commandSender;
 
-        File balancesFile = Utilities.getBalancesFile();
-        File aliasesFile = Utilities.getAliasesFile();
+        File balancesFile = Util.getBalancesFile();
+        File aliasesFile = Util.getAliasesFile();
 
         YamlConfiguration balancesConfig = YamlConfiguration.loadConfiguration(balancesFile);
         YamlConfiguration aliasesConfig = YamlConfiguration.loadConfiguration(aliasesFile);
@@ -48,20 +47,20 @@ public class LeaderboardCommand implements CommandExecutor {
                 .collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue(),
                         (entry1, entry2) -> entry2, LinkedHashMap::new));
 
-        player.sendMessage(Utilities.PREFIX_COLOR +
+        player.sendMessage(Util.PREFIX_COLOR +
                 plugin.getConfig().getString("prefix") +
-                Utilities.DEFAULT_COLOR +
+                Util.DEFAULT_COLOR +
                 " Leaderboard ");
 
         int place = 1;
         for (String name : balances.keySet()) {
-            player.sendMessage(Utilities.HIGHLIGHT_COLOR +
+            player.sendMessage(Util.HIGHLIGHT_COLOR +
                     String.valueOf(place) +
                     ") " +
-                    Utilities.DEFAULT_COLOR +
+                    Util.DEFAULT_COLOR +
                     name +
                     " " +
-                    ChatColor.GREEN +
+                    Util.MONEY_COLOR +
                     String.format("$%.2f", balances.get(name)));
 
             if (place == 9)

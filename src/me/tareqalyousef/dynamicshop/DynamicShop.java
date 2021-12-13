@@ -1,18 +1,16 @@
 package me.tareqalyousef.dynamicshop;
 
-import jdk.jshell.execution.Util;
 import me.tareqalyousef.dynamicshop.commands.BalanceCommand;
 import me.tareqalyousef.dynamicshop.commands.BuyCommand;
 import me.tareqalyousef.dynamicshop.commands.LeaderboardCommand;
 import me.tareqalyousef.dynamicshop.commands.SellCommand;
 import me.tareqalyousef.dynamicshop.listeners.JoinListener;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-
-import static org.bukkit.Bukkit.getServer;
 
 public class DynamicShop extends JavaPlugin {
     @Override
@@ -32,22 +30,23 @@ public class DynamicShop extends JavaPlugin {
 
         // verify all player data
         for (Player player : Bukkit.getOnlinePlayers()) {
-            Utilities.checkPlayerData(player);
+            Util.checkPlayerData(player);
         }
     }
 
     public void verifyDirectories() {
-        //saveResource(Utilities.BALANCES_PATH, true);
-        File data = new File(Utilities.DATA_PATH);
-        File balances = new File(Utilities.BALANCES_PATH);
-        File defaults = new File(Utilities.DEFAULT_PRICES_PATH);
-        File aliases = new File(Utilities.ALIASES_PATH);
+        File data = new File(Util.DATA_PATH);
+        File balances = new File(Util.BALANCES_PATH);
+        File defaults = new File(Util.DEFAULT_PRICES_PATH);
+        File prices = new File(Util.CURRENT_PRICES_PATH);
+        File aliases = new File(Util.ALIASES_PATH);
 
         try {
             if (!data.exists()) data.mkdir();
             if (!balances.exists()) balances.createNewFile();
-            if (!defaults.exists()) defaults.createNewFile();
             if (!aliases.exists()) aliases.createNewFile();
+            if (!defaults.exists()) Util.createDefaultPricesFile();
+            if (!prices.exists()) Util.createCurrentPricesFile();
         } catch (Exception e) {
             Bukkit.getLogger().info("Error with directory verification");
         }

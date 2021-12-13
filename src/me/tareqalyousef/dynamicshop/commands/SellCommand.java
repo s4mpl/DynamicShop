@@ -1,14 +1,15 @@
 package me.tareqalyousef.dynamicshop.commands;
 
 import me.tareqalyousef.dynamicshop.DynamicShop;
-import me.tareqalyousef.dynamicshop.Utilities;
-import org.bukkit.ChatColor;
+import me.tareqalyousef.dynamicshop.Util;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Locale;
 
 public class SellCommand implements CommandExecutor {
     private DynamicShop plugin;
@@ -29,59 +30,49 @@ public class SellCommand implements CommandExecutor {
         double totalPrice;
         Material type;
         ItemStack content;
+        String name;
+        double playerBalance;
 
         try {
+            type = Material.getMaterial(strings[0].toUpperCase());
             amount = Integer.parseInt(strings[1]);
-            type = Material.getMaterial(strings[0]);
+            name = type.toString().toLowerCase();
             content = new ItemStack(type, amount);
         } catch (Exception e) {
-            player.sendMessage(Utilities.PREFIX_COLOR +
+            player.sendMessage(Util.PREFIX_COLOR +
                     plugin.getConfig().getString("prefix") +
-                    Utilities.DEFAULT_COLOR +
+                    Util.DEFAULT_COLOR +
                     " Could not parse command");
 
             return false;
         }
-        pricePerUnit = Utilities.getItemPrice(type.toString().toUpperCase());
+
+        pricePerUnit = Util.getItemPrice(type.toString());
         totalPrice = amount * pricePerUnit;
+        playerBalance = Util.getPlayerBalance(player.getUniqueId().toString());
 
         if (!player.getInventory().contains(content)) {
-            player.sendMessage(Utilities.PREFIX_COLOR +
+            player.sendMessage(Util.PREFIX_COLOR +
                     plugin.getConfig().getString("prefix") +
-                    Utilities.DEFAULT_COLOR +
+                    Util.DEFAULT_COLOR +
                     " You do not have " +
-                    Utilities.HIGHLIGHT_COLOR +
+                    Util.HIGHLIGHT_COLOR +
                     String.valueOf(amount) +
-                    Utilities.DEFAULT_COLOR +
+                    Util.DEFAULT_COLOR +
                     " " +
-                    Utilities.HIGHLIGHT_COLOR +
-                    type.toString());
+                    Util.HIGHLIGHT_COLOR +
+                    name);
 
             return true;
         }
-        player.getInventory().removeItem(content);
-        // add to player balance
 
-        player.sendMessage(Utilities.PREFIX_COLOR +
-                plugin.getConfig().getString("prefix") +
-                Utilities.DEFAULT_COLOR +
-                " Sold " +
-                Utilities.HIGHLIGHT_COLOR +
-                String.valueOf(amount) +
-                Utilities.DEFAULT_COLOR +
-                " " +
-                Utilities.HIGHLIGHT_COLOR +
-                type.toString() +
-                Utilities.DEFAULT_COLOR +
-                " for $" +
-                Utilities.HIGHLIGHT_COLOR +
-                String.valueOf(totalPrice) +
-                Utilities.DEFAULT_COLOR +
-                " ($" +
-                Utilities.HIGHLIGHT_COLOR +
-                String.valueOf(pricePerUnit) +
-                Utilities.DEFAULT_COLOR +
-                " each)");
+        player.getInventory().removeItem(content);
+        Util.setPlayerBalance(player.getUniqueId().toString(), playerBalance + totalPrice);
+
+        player.sendMessage(Util.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Util.DEFAULT_COLOR + " Sold " +
+                Util.HIGHLIGHT_COLOR + String.valueOf(amount) + Util.DEFAULT_COLOR + " " + Util.HIGHLIGHT_COLOR + name +
+                Util.DEFAULT_COLOR + " for " + Util.MONEY_COLOR + "$" + String.format("%.2f", totalPrice) + Util.DEFAULT_COLOR + " (" +
+                Util.MONEY_COLOR + "$" + String.format("%.2f", pricePerUnit) + Util.DEFAULT_COLOR + " each)");
 
         return true;
     }

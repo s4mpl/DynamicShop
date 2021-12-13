@@ -1,15 +1,10 @@
 package me.tareqalyousef.dynamicshop.listeners;
 
 import me.tareqalyousef.dynamicshop.DynamicShop;
-import me.tareqalyousef.dynamicshop.Utilities;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
+import me.tareqalyousef.dynamicshop.Util;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-
-import java.io.File;
 
 public class JoinListener implements Listener {
     private DynamicShop plugin;
@@ -20,6 +15,6 @@ public class JoinListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
-        Utilities.checkPlayerData(e.getPlayer());
+        Util.checkPlayerData(e.getPlayer());
     }
 }
