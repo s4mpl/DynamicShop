@@ -13,3 +13,5 @@ commands:
     description: Check your balance.
   leaderboard:
     description: Check the highest balances on the server.
+  price:
+    description: Check the price of an item.
