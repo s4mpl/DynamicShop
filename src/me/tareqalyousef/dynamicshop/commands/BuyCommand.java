@@ -49,7 +49,7 @@ public class BuyCommand implements CommandExecutor {
             return false;
         }
 
-        if (amount < 0) {
+        if (amount <= 0) {
             player.sendMessage(Util.PREFIX_COLOR +
                     plugin.getConfig().getString("prefix") +
                     Util.DEFAULT_COLOR +
@@ -84,12 +84,10 @@ public class BuyCommand implements CommandExecutor {
         }
         Util.setPlayerBalance(player.getUniqueId().toString(), playerBalance - totalPrice);
 
-        if (amountDropped > 0) {
-            player.sendMessage(Util.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Util.DEFAULT_COLOR + " Bought " +
-                    Util.HIGHLIGHT_COLOR + String.valueOf(amount) + Util.DEFAULT_COLOR + " " + Util.HIGHLIGHT_COLOR + name +
-                    Util.DEFAULT_COLOR + " for " + Util.MONEY_COLOR + "$" + String.format("%.2f", totalPrice) + Util.DEFAULT_COLOR + " (" +
-                    Util.MONEY_COLOR + "$" + String.format("%.2f", pricePerUnit) + Util.DEFAULT_COLOR + " each)");
-        }
+        player.sendMessage(Util.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Util.DEFAULT_COLOR + " Bought " +
+                Util.HIGHLIGHT_COLOR + String.valueOf(amount) + Util.DEFAULT_COLOR + " " + Util.HIGHLIGHT_COLOR + name +
+                Util.DEFAULT_COLOR + " for " + Util.MONEY_COLOR + "$" + String.format("%.2f", totalPrice) + Util.DEFAULT_COLOR + " (" +
+                Util.MONEY_COLOR + "$" + String.format("%.2f", pricePerUnit) + Util.DEFAULT_COLOR + " each)");
 
         return true;
     }

@@ -1,6 +1,7 @@
 package me.tareqalyousef.dynamicshop.commands;
 
 import me.tareqalyousef.dynamicshop.DynamicShop;
+import me.tareqalyousef.dynamicshop.Settings;
 import me.tareqalyousef.dynamicshop.Util;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -29,7 +30,6 @@ public class SellCommand implements CommandExecutor {
         int actualAmount;
         double pricePerUnit;
         double totalPrice;
-        double salesTax;
         Material type;
         ItemStack content;
         String name;
@@ -39,7 +39,6 @@ public class SellCommand implements CommandExecutor {
             type = Material.getMaterial(strings[0].toUpperCase());
             amount = Integer.parseInt(strings[1]);
             actualAmount = 0;
-            salesTax = 0.8;
             name = type.toString().toLowerCase();
             content = new ItemStack(type, 1);
         } catch (Exception e) {
@@ -51,7 +50,7 @@ public class SellCommand implements CommandExecutor {
             return false;
         }
 
-        if (amount < 0) {
+        if (amount <= 0) {
             player.sendMessage(Util.PREFIX_COLOR +
                     plugin.getConfig().getString("prefix") +
                     Util.DEFAULT_COLOR +
@@ -90,17 +89,15 @@ public class SellCommand implements CommandExecutor {
         actualAmount = Math.min(amount, actualAmount);
         for (int i = 0; i < actualAmount; i++) {
             Util.removeItem(player, type);
-            Util.setPlayerBalance(player.getUniqueId().toString(), playerBalance + salesTax * pricePerUnit);
+            Util.setPlayerBalance(player.getUniqueId().toString(), playerBalance + Settings.SALES_TAX * pricePerUnit);
         }
 
-        if (actualAmount > 0) {
-            totalPrice = actualAmount * pricePerUnit * salesTax;
-            player.sendMessage(Util.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Util.DEFAULT_COLOR + " Sold " +
-                    Util.HIGHLIGHT_COLOR + String.valueOf(actualAmount) + Util.DEFAULT_COLOR + " " + Util.HIGHLIGHT_COLOR + name +
-                    Util.DEFAULT_COLOR + " for " + Util.MONEY_COLOR + "$" + String.format("%.2f", totalPrice) + Util.DEFAULT_COLOR + " (" +
-                    Util.MONEY_COLOR + "$" + String.format("%.2f", pricePerUnit) + Util.DEFAULT_COLOR + " each at " +
-                    Util.HIGHLIGHT_COLOR + String.valueOf(salesTax * 100) + "%" + Util.DEFAULT_COLOR + " market value)");
-        }
+        totalPrice = actualAmount * pricePerUnit * Settings.SALES_TAX;
+        player.sendMessage(Util.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Util.DEFAULT_COLOR + " Sold " +
+                Util.HIGHLIGHT_COLOR + String.valueOf(actualAmount) + Util.DEFAULT_COLOR + " " + Util.HIGHLIGHT_COLOR + name +
+                Util.DEFAULT_COLOR + " for " + Util.MONEY_COLOR + "$" + String.format("%.2f", totalPrice) + Util.DEFAULT_COLOR + " (" +
+                Util.MONEY_COLOR + "$" + String.format("%.2f", pricePerUnit) + Util.DEFAULT_COLOR + " each at " +
+                Util.HIGHLIGHT_COLOR + String.valueOf(Settings.SALES_TAX * 100) + "%" + Util.DEFAULT_COLOR + " market value)");
 
         return true;
     }

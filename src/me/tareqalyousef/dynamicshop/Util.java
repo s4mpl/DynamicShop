@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
+import java.util.HashMap;
 
 import static org.bukkit.Bukkit.getServer;
 
@@ -102,6 +103,40 @@ public class Util {
         }
     }
 
+    public static void createDefaultPricesFile() {
+        File defaults = new File(Util.DEFAULT_PRICES_PATH);
+
+        try{
+            defaults.createNewFile();
+        } catch (Exception e) {
+            Bukkit.getLogger().info("Could not create default prices file");
+        }
+
+        // todo: data
+    }
+
+    public static void createCurrentPricesFile() {
+        File prices = new File(Util.CURRENT_PRICES_PATH);
+
+        try{
+            prices.createNewFile();
+        } catch (Exception e) {
+            Bukkit.getLogger().info("Could not create current prices file");
+        }
+
+        YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(Util.getDefaultPricesFile());
+        YamlConfiguration pricesConfig = YamlConfiguration.loadConfiguration(Util.getCurrentPricesFile());
+
+        for (String material : defaultConfig.getKeys(false))
+            pricesConfig.set(material, defaultConfig.getDouble(material));
+
+        try {
+            pricesConfig.save(prices);
+        } catch (Exception exception) {
+            Bukkit.getLogger().info("Could not save prices.yml");
+        }
+    }
+
     public static double getPlayerBalance(String playerId) {
         File balances = Util.getBalancesFile();
         YamlConfiguration config = YamlConfiguration.loadConfiguration(balances);
@@ -154,38 +189,22 @@ public class Util {
         }
     }
 
-    public static void createDefaultPricesFile() {
-        File defaults = new File(Util.DEFAULT_PRICES_PATH);
-
-        try{
-            defaults.createNewFile();
-        } catch (Exception e) {
-            Bukkit.getLogger().info("Could not create default prices file");
-        }
-
-        // todo: data
-    }
-
-    public static void createCurrentPricesFile() {
-        File prices = new File(Util.CURRENT_PRICES_PATH);
-
-        try{
-            prices.createNewFile();
-        } catch (Exception e) {
-            Bukkit.getLogger().info("Could not create current prices file");
-        }
-
+    public static HashMap<String, Double> getItemPriceChanges() {
         YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(Util.getDefaultPricesFile());
         YamlConfiguration pricesConfig = YamlConfiguration.loadConfiguration(Util.getCurrentPricesFile());
 
-        for (String material : defaultConfig.getKeys(false))
-            pricesConfig.set(material, defaultConfig.getDouble(material));
+        HashMap<String, Double> changes = new HashMap<String, Double>();
 
         try {
-            pricesConfig.save(prices);
-        } catch (Exception exception) {
-            Bukkit.getLogger().info("Could not save prices.yml");
+            for (String mat : defaultConfig.getKeys(false)) {
+                double ratio = pricesConfig.getDouble(mat) / defaultConfig.getDouble(mat);
+                changes.put(mat, ratio);
+            }
+        } catch (Exception e) {
+            Bukkit.getLogger().info("Could not read price changes");
         }
+
+        return changes;
     }
 
     // From https://github.com/MarvinKlar/Shop/blob/master/src/mr/minecraft15/shop/commands/ShopCommand.java (genius)
@@ -207,5 +226,5 @@ public class Util {
         }
     }
 
-    // Todo: quote price of quantity of item; formula for quote command and buy/sell commands
+    // Todo: quote price of quantity of item
 }
