@@ -34,10 +34,12 @@ public class SellCommand implements CommandExecutor {
         ItemStack content;
         String name;
         double playerBalance;
+        boolean all;
 
         try {
             type = Material.getMaterial(strings[0].toUpperCase());
-            amount = strings[1].equalsIgnoreCase("all") ? 9999 : Integer.parseInt(strings[1]);
+            all = strings[1].equalsIgnoreCase("all");
+            amount = all ? 9999 : Integer.parseInt(strings[1]);
             actualAmount = 0;
             name = type.toString().toLowerCase();
             content = new ItemStack(type, 1);
@@ -69,7 +71,7 @@ public class SellCommand implements CommandExecutor {
             }
         }
 
-        if (actualAmount < amount) {
+        if (actualAmount < amount && !all) {
             player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " You do not have " +
                     Settings.HIGHLIGHT_COLOR + String.valueOf(amount) + Settings.DEFAULT_COLOR + " " + Settings.HIGHLIGHT_COLOR + name);
         }
