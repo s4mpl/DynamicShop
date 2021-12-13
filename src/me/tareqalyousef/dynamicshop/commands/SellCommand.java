@@ -26,8 +26,10 @@ public class SellCommand implements CommandExecutor {
         Player player = (Player)commandSender;
 
         int amount;
+        int actualAmount;
         double pricePerUnit;
         double totalPrice;
+        double salesTax;
         Material type;
         ItemStack content;
         String name;
@@ -36,8 +38,10 @@ public class SellCommand implements CommandExecutor {
         try {
             type = Material.getMaterial(strings[0].toUpperCase());
             amount = Integer.parseInt(strings[1]);
+            actualAmount = 0;
+            salesTax = 0.8;
             name = type.toString().toLowerCase();
-            content = new ItemStack(type, amount);
+            content = new ItemStack(type, 1);
         } catch (Exception e) {
             player.sendMessage(Util.PREFIX_COLOR +
                     plugin.getConfig().getString("prefix") +
@@ -47,11 +51,29 @@ public class SellCommand implements CommandExecutor {
             return false;
         }
 
+        if (amount < 0) {
+            player.sendMessage(Util.PREFIX_COLOR +
+                    plugin.getConfig().getString("prefix") +
+                    Util.DEFAULT_COLOR +
+                    " Must be a positive value");
+
+            return true;
+        }
+
         pricePerUnit = Util.getItemPrice(type.toString());
-        totalPrice = amount * pricePerUnit;
         playerBalance = Util.getPlayerBalance(player.getUniqueId().toString());
 
-        if (!player.getInventory().contains(content)) {
+        // Check if the player has the amount of items
+        for (ItemStack i : player.getInventory().getContents()) {
+            if (i != null) {
+                if (actualAmount >= amount) break;
+                if (content.isSimilar(i)) {
+                    actualAmount += i.getAmount();
+                }
+            }
+        }
+
+        if (actualAmount < amount) {
             player.sendMessage(Util.PREFIX_COLOR +
                     plugin.getConfig().getString("prefix") +
                     Util.DEFAULT_COLOR +
@@ -62,17 +84,23 @@ public class SellCommand implements CommandExecutor {
                     " " +
                     Util.HIGHLIGHT_COLOR +
                     name);
-
-            return true;
         }
 
-        player.getInventory().removeItem(content);
-        Util.setPlayerBalance(player.getUniqueId().toString(), playerBalance + totalPrice);
+        // Optimize to only sell as many as the player has
+        actualAmount = Math.min(amount, actualAmount);
+        for (int i = 0; i < actualAmount; i++) {
+            Util.removeItem(player, type);
+            Util.setPlayerBalance(player.getUniqueId().toString(), playerBalance + salesTax * pricePerUnit);
+        }
 
-        player.sendMessage(Util.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Util.DEFAULT_COLOR + " Sold " +
-                Util.HIGHLIGHT_COLOR + String.valueOf(amount) + Util.DEFAULT_COLOR + " " + Util.HIGHLIGHT_COLOR + name +
-                Util.DEFAULT_COLOR + " for " + Util.MONEY_COLOR + "$" + String.format("%.2f", totalPrice) + Util.DEFAULT_COLOR + " (" +
-                Util.MONEY_COLOR + "$" + String.format("%.2f", pricePerUnit) + Util.DEFAULT_COLOR + " each)");
+        if (actualAmount > 0) {
+            totalPrice = actualAmount * pricePerUnit * salesTax;
+            player.sendMessage(Util.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Util.DEFAULT_COLOR + " Sold " +
+                    Util.HIGHLIGHT_COLOR + String.valueOf(actualAmount) + Util.DEFAULT_COLOR + " " + Util.HIGHLIGHT_COLOR + name +
+                    Util.DEFAULT_COLOR + " for " + Util.MONEY_COLOR + "$" + String.format("%.2f", totalPrice) + Util.DEFAULT_COLOR + " (" +
+                    Util.MONEY_COLOR + "$" + String.format("%.2f", pricePerUnit) + Util.DEFAULT_COLOR + " each at " +
+                    Util.HIGHLIGHT_COLOR + String.valueOf(salesTax * 100) + "%" + Util.DEFAULT_COLOR + " market value)");
+        }
 
         return true;
     }

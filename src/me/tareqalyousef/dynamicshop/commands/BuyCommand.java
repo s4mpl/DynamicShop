@@ -26,6 +26,7 @@ public class BuyCommand implements CommandExecutor {
         Player player = (Player)commandSender;
 
         int amount;
+        int amountDropped;
         double pricePerUnit;
         double totalPrice;
         Material type;
@@ -36,8 +37,9 @@ public class BuyCommand implements CommandExecutor {
         try {
             type = Material.getMaterial(strings[0].toUpperCase());
             amount = Integer.parseInt(strings[1]);
+            amountDropped = 0;
             name = type.toString().toLowerCase();
-            content = new ItemStack(type, amount);
+            content = new ItemStack(type, Math.min(amount, type.getMaxStackSize()));
         } catch (Exception e) {
             player.sendMessage(Util.PREFIX_COLOR +
                     plugin.getConfig().getString("prefix") +
@@ -45,6 +47,23 @@ public class BuyCommand implements CommandExecutor {
                     " Could not parse command");
 
             return false;
+        }
+
+        if (amount < 0) {
+            player.sendMessage(Util.PREFIX_COLOR +
+                    plugin.getConfig().getString("prefix") +
+                    Util.DEFAULT_COLOR +
+                    " Must be a positive value");
+
+            return true;
+        }
+
+        if(amount > type.getMaxStackSize() * 16) {
+            player.sendMessage(Util.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Util.DEFAULT_COLOR +
+                    " Cannot buy more than " + Util.HIGHLIGHT_COLOR + String.valueOf(type.getMaxStackSize() * 16) + " " +
+                    name +Util.DEFAULT_COLOR + " at a time");
+
+            return true;
         }
 
         pricePerUnit = Util.getItemPrice(type.toString());
@@ -58,13 +77,19 @@ public class BuyCommand implements CommandExecutor {
             return true;
         }
 
-        player.getWorld().dropItem(player.getLocation(), content);
+        while(amountDropped < amount) {
+            player.getWorld().dropItem(player.getLocation(), content);
+            amountDropped += content.getAmount();
+            content.setAmount(Math.min(amount - amountDropped, type.getMaxStackSize()));
+        }
         Util.setPlayerBalance(player.getUniqueId().toString(), playerBalance - totalPrice);
 
-        player.sendMessage(Util.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Util.DEFAULT_COLOR + " Bought " +
-                Util.HIGHLIGHT_COLOR + String.valueOf(amount) + Util.DEFAULT_COLOR + " " + Util.HIGHLIGHT_COLOR + name +
-                Util.DEFAULT_COLOR + " for " + Util.MONEY_COLOR + "$" + String.format("%.2f", totalPrice) + Util.DEFAULT_COLOR + " (" +
-                Util.MONEY_COLOR + "$" + String.format("%.2f", pricePerUnit) + Util.DEFAULT_COLOR + " each)");
+        if (amountDropped > 0) {
+            player.sendMessage(Util.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Util.DEFAULT_COLOR + " Bought " +
+                    Util.HIGHLIGHT_COLOR + String.valueOf(amount) + Util.DEFAULT_COLOR + " " + Util.HIGHLIGHT_COLOR + name +
+                    Util.DEFAULT_COLOR + " for " + Util.MONEY_COLOR + "$" + String.format("%.2f", totalPrice) + Util.DEFAULT_COLOR + " (" +
+                    Util.MONEY_COLOR + "$" + String.format("%.2f", pricePerUnit) + Util.DEFAULT_COLOR + " each)");
+        }
 
         return true;
     }

@@ -4,6 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 
@@ -185,4 +187,25 @@ public class Util {
             Bukkit.getLogger().info("Could not save prices.yml");
         }
     }
+
+    // From https://github.com/MarvinKlar/Shop/blob/master/src/mr/minecraft15/shop/commands/ShopCommand.java (genius)
+    public static void removeItem(Player p, Material m) {
+        for (int i = 0; i < p.getInventory().getSize(); i++) {
+            if (p.getInventory().getItem(i) != null) {
+                if (p.getInventory().getItem(i).getType() == m) {
+                    if (p.getInventory().getItem(i).getAmount() == 1) {
+                        p.getInventory().setItem(i, new ItemStack(Material.AIR));
+                        p.updateInventory();
+                    } else {
+                        p.getInventory().getItem(i).setAmount(p.getInventory().getItem(i).getAmount() - 1);
+                        p.updateInventory();
+                    }
+                    // Avoid bug where it subtracts from all stacks of that material type
+                    return;
+                }
+            }
+        }
+    }
+
+    // Todo: quote price of quantity of item; formula for quote command and buy/sell commands
 }
