@@ -1,0 +1,13 @@
+name: DynamicShop
+version: 1.0
+author: TareqAlyousef
+main: me.tareqalyousef.dynamicshop.DynamicShop
+description: A simple shop that adjusts prices based off demand!
+
+commands:
+  buy:
+    description: Buy an item from the global shop.
+  sell:
+    description: Sell an item to the global shop.
+  balance:
+    description: Check your balance.
