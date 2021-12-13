@@ -29,8 +29,8 @@ public class SellCommand implements CommandExecutor {
         ItemStack content;
 
         try {
-            amount = Integer.parseInt(strings[0]);
-            type = Material.getMaterial(strings[1]);
+            amount = Integer.parseInt(strings[1]);
+            type = Material.getMaterial(strings[0]);
             content = new ItemStack(type, amount);
         } catch (Exception e) {
             player.sendMessage(Utilities.PREFIX_COLOR +

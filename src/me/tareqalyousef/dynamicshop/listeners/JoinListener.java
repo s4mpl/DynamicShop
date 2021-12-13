@@ -20,19 +20,6 @@ public class JoinListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
-        Player player = e.getPlayer();
-        File balances = Utilities.GetBalancesConfig();
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(balances);
-
-        if (!config.contains(player.getUniqueId().toString())) {
-            config.set(player.getUniqueId().toString(), 0.0);
-            Bukkit.getLogger().info("Added " + player.getDisplayName() + " to balances.yml");
-
-            try {
-                config.save(balances);
-            } catch (Exception exception) {
-                Bukkit.getLogger().info("Could not save balances.yml");
-            }
-        }
+        Utilities.checkPlayerData(e.getPlayer());
     }
 }
