@@ -37,7 +37,7 @@ public class SellCommand implements CommandExecutor {
 
         try {
             type = Material.getMaterial(strings[0].toUpperCase());
-            amount = Integer.parseInt(strings[1]);
+            amount = strings[1].equalsIgnoreCase("all") ? 9999 : Integer.parseInt(strings[1]);
             actualAmount = 0;
             name = type.toString().toLowerCase();
             content = new ItemStack(type, 1);
