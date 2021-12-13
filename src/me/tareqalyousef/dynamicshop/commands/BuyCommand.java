@@ -31,8 +31,8 @@ public class BuyCommand implements CommandExecutor {
         ItemStack content;
 
         try {
-            amount = Integer.parseInt(strings[0]);
-            type = Material.getMaterial(strings[1]);
+            amount = Integer.parseInt(strings[1]);
+            type = Material.getMaterial(strings[0]);
             content = new ItemStack(type, amount);
         } catch (Exception e) {
             player.sendMessage(Utilities.PREFIX_COLOR +
@@ -42,10 +42,10 @@ public class BuyCommand implements CommandExecutor {
 
             return false;
         }
-        pricePerUnit = Utilities.GetItemPrice(type.toString().toUpperCase());
+        pricePerUnit = Utilities.getItemPrice(type.toString().toUpperCase());
         totalPrice = amount * pricePerUnit;
 
-        if (!(Utilities.GetPlayerBalance(player.getUniqueId().toString()) < totalPrice)) {
+        if (!(Utilities.getPlayerBalance(player.getUniqueId().toString()) < totalPrice)) {
             player.sendMessage(Utilities.PREFIX_COLOR +
                     plugin.getConfig().getString("prefix") +
                     Utilities.DEFAULT_COLOR +

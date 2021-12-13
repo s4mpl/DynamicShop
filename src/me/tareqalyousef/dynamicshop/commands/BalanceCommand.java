@@ -21,7 +21,7 @@ public class BalanceCommand implements CommandExecutor {
             return true;
 
         Player player = (Player)commandSender;
-        double balance = Utilities.GetPlayerBalance(player.getUniqueId().toString());
+        double balance = Utilities.getPlayerBalance(player.getUniqueId().toString());
 
         player.sendMessage(Utilities.PREFIX_COLOR +
                            plugin.getConfig().getString("prefix") +

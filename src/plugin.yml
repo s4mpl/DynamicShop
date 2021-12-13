@@ -11,3 +11,5 @@ commands:
     description: Sell an item to the global shop.
   balance:
     description: Check your balance.
+  leaderboard:
+    description: Check the highest balances on the server.
