@@ -172,6 +172,16 @@ public class Util {
         }
     }
 
+    public static double getDefaultItemPrice(String materialName) {
+        File prices = Util.getDefaultPricesFile();
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(prices);
+
+        if (!config.contains(materialName))
+            return -1;
+
+        return config.getDouble(materialName);
+    }
+
     public static double getItemPrice(String materialName) {
         File prices = Util.getCurrentPricesFile();
         YamlConfiguration config = YamlConfiguration.loadConfiguration(prices);
@@ -216,6 +226,45 @@ public class Util {
         return changes;
     }
 
+    public static double quoteItemPrice(String materialName, char mode, int amount) {
+        double quote = getItemPrice(materialName);
+        double total = 0;
+
+        if (mode == 'b') {
+            for(int i = 0; i < amount; i++) {
+                total += quote;
+                quote *= 1 + Settings.BASE_RATE * Math.pow(getDefaultItemPrice(materialName), Settings.GROWTH_RATE);
+            }
+
+            return total;
+        } else if (mode == 's') {
+            for(int i = 0; i < amount; i++) {
+                total += quote;
+                quote /= 1 + Settings.BASE_RATE * Math.pow(getDefaultItemPrice(materialName), Settings.GROWTH_RATE);
+            }
+
+            return total * Settings.SALES_TAX;
+        } else {
+            return -1;
+        }
+    }
+
+    public static double quoteItemPriceChange(String materialName, char mode, int amount) {
+        double quote = getItemPrice(materialName);
+
+        if (mode == 'b') {
+            quote *= Math.pow(1 + Settings.BASE_RATE * Math.pow(getDefaultItemPrice(materialName), Settings.GROWTH_RATE), amount);
+
+            return quote;
+        } else if (mode == 's') {
+            quote /= Math.pow(1 + Settings.BASE_RATE * Math.pow(getDefaultItemPrice(materialName), Settings.GROWTH_RATE), amount);
+
+            return quote;
+        } else {
+            return -1;
+        }
+    }
+
     // From https://github.com/MarvinKlar/Shop/blob/master/src/mr/minecraft15/shop/commands/ShopCommand.java (genius)
     public static void removeItem(Player p, Material m) {
         for (int i = 0; i < p.getInventory().getSize(); i++) {
@@ -234,6 +283,4 @@ public class Util {
             }
         }
     }
-
-    // Todo: quote price of quantity of item
 }

@@ -62,14 +62,15 @@ public class BuyCommand implements CommandExecutor {
         }
 
         pricePerUnit = Util.getItemPrice(type.toString());
-        totalPrice = amount * pricePerUnit;
         playerBalance = Util.getPlayerBalance(player.getUniqueId().toString());
 
         if (pricePerUnit == -1) {
-            player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " You cannot sell this item");
+            player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " You cannot buy this item");
+
             return true;
         }
 
+        totalPrice = Util.quoteItemPrice(strings[0].toUpperCase(), 'b', amount);
         if (playerBalance < totalPrice) {
             player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " You do not have " +
                     Settings.MONEY_COLOR + String.format("$%.2f", totalPrice));
@@ -84,11 +85,12 @@ public class BuyCommand implements CommandExecutor {
         }
 
         Util.setPlayerBalance(player.getUniqueId().toString(), playerBalance - totalPrice);
+        Util.setItemPrice(strings[0].toUpperCase(), Util.quoteItemPriceChange(strings[0].toUpperCase(), 'b', amount));
 
         player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " Bought " +
-                Settings.HIGHLIGHT_COLOR + String.valueOf(amount) + Settings.DEFAULT_COLOR + " " + Settings.HIGHLIGHT_COLOR + name +
+                Settings.HIGHLIGHT_COLOR + String.valueOf(amount) + " " + Settings.HIGHLIGHT_COLOR + name +
                 Settings.DEFAULT_COLOR + " for " + Settings.MONEY_COLOR + "$" + String.format("%.2f", totalPrice) + Settings.DEFAULT_COLOR + " (" +
-                Settings.MONEY_COLOR + "$" + String.format("%.2f", pricePerUnit) + Settings.DEFAULT_COLOR + " each)");
+                Settings.MONEY_COLOR + "$" + String.format("%.2f", totalPrice / amount) + Settings.DEFAULT_COLOR + " each)");
 
         return true;
     }

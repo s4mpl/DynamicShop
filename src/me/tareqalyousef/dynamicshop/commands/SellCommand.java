@@ -80,15 +80,17 @@ public class SellCommand implements CommandExecutor {
         actualAmount = Math.min(amount, actualAmount);
         for (int i = 0; i < actualAmount; i++) {
             Util.removeItem(player, type);
-            Util.setPlayerBalance(player.getUniqueId().toString(), playerBalance + Settings.SALES_TAX * pricePerUnit);
         }
 
+        totalPrice = Util.quoteItemPrice(strings[0].toUpperCase(), 's', actualAmount);
+        Util.setPlayerBalance(player.getUniqueId().toString(), playerBalance + totalPrice);
+        Util.setItemPrice(strings[0].toUpperCase(), Util.quoteItemPriceChange(strings[0].toUpperCase(), 's', actualAmount));
+
         if (actualAmount > 0) {
-            totalPrice = actualAmount * pricePerUnit * Settings.SALES_TAX;
             player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " Sold " +
-                    Settings.HIGHLIGHT_COLOR + String.valueOf(actualAmount) + Settings.DEFAULT_COLOR + " " + Settings.HIGHLIGHT_COLOR + name +
+                    Settings.HIGHLIGHT_COLOR + String.valueOf(actualAmount) + " " + Settings.HIGHLIGHT_COLOR + name +
                     Settings.DEFAULT_COLOR + " for " + Settings.MONEY_COLOR + "$" + String.format("%.2f", totalPrice) + Settings.DEFAULT_COLOR + " (" +
-                    Settings.MONEY_COLOR + "$" + String.format("%.2f", pricePerUnit) + Settings.DEFAULT_COLOR + " each at " +
+                    Settings.MONEY_COLOR + "$" + String.format("%.2f", totalPrice / actualAmount) + Settings.DEFAULT_COLOR + " each at " +
                     Settings.HIGHLIGHT_COLOR + String.format("%.2f", Settings.SALES_TAX * 100) + "%" + Settings.DEFAULT_COLOR + " market value)");
         }
 
