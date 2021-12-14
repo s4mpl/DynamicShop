@@ -2,6 +2,7 @@ package me.tareqalyousef.dynamicshop.commands;
 
 import me.tareqalyousef.dynamicshop.DynamicShop;
 import me.tareqalyousef.dynamicshop.Settings;
+import me.tareqalyousef.dynamicshop.TransactionType;
 import me.tareqalyousef.dynamicshop.Util;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -39,8 +40,8 @@ public class SellCommand implements CommandExecutor {
         try {
             type = Material.getMaterial(strings[0].toUpperCase());
             all = strings[1].equalsIgnoreCase("all");
-            amount = all ? 9999 : Integer.parseInt(strings[1]);
-            actualAmount = 0;
+            actualAmount = Util.getInventoryQuantity(player, type);
+            amount = all ? actualAmount : Integer.parseInt(strings[1]);
             name = type.toString().toLowerCase();
             content = new ItemStack(type, 1);
         } catch (Exception e) {
@@ -49,7 +50,12 @@ public class SellCommand implements CommandExecutor {
         }
 
         if (amount <= 0) {
-            player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " Must be a positive value");
+            if (!all) {
+                player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " Must be a positive value");
+            } else {
+                player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " You do not have any " +
+                        Settings.HIGHLIGHT_COLOR + name);
+            }
             return true;
         }
 
@@ -59,16 +65,6 @@ public class SellCommand implements CommandExecutor {
         if (pricePerUnit == -1) {
             player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " You cannot sell this item");
             return true;
-        }
-
-        // Check if the player has the amount of items
-        for (ItemStack i : player.getInventory().getContents()) {
-            if (i != null) {
-                if (actualAmount >= amount) break;
-                if (content.isSimilar(i)) {
-                    actualAmount += i.getAmount();
-                }
-            }
         }
 
         if (actualAmount < amount && !all) {
@@ -82,9 +78,9 @@ public class SellCommand implements CommandExecutor {
             Util.removeItem(player, type);
         }
 
-        totalPrice = Util.quoteItemPrice(strings[0].toUpperCase(), 's', actualAmount);
+        totalPrice = Util.quoteItemPrice(strings[0].toUpperCase(), TransactionType.SELL, actualAmount);
         Util.setPlayerBalance(player.getUniqueId().toString(), playerBalance + totalPrice);
-        Util.setItemPrice(strings[0].toUpperCase(), Util.quoteItemPriceChange(strings[0].toUpperCase(), 's', actualAmount));
+        Util.setItemPrice(strings[0].toUpperCase(), Util.quoteItemPriceChange(strings[0].toUpperCase(), TransactionType.SELL, actualAmount));
 
         if (actualAmount > 0) {
             player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " Sold " +

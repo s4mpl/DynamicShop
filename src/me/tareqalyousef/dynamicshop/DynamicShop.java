@@ -24,6 +24,7 @@ public class DynamicShop extends JavaPlugin {
         this.getCommand("price").setExecutor(new PriceCommand(this));
         this.getCommand("highest").setExecutor(new HighestCommand(this));
         this.getCommand("lowest").setExecutor(new LowestCommand(this));
+        this.getCommand("quote").setExecutor(new QuoteCommand(this));
 
         // listeners
         getServer().getPluginManager().registerEvents(new JoinListener(this), this);

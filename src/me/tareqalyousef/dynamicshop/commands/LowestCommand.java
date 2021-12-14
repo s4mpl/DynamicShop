@@ -28,7 +28,6 @@ public class LowestCommand implements CommandExecutor {
             return true;
 
         Player player = (Player)commandSender;
-
         HashMap<String, Double> changes = Util.getItemPriceChanges();
 
         changes = changes.entrySet()

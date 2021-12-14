@@ -2,6 +2,7 @@ package me.tareqalyousef.dynamicshop.commands;
 
 import me.tareqalyousef.dynamicshop.DynamicShop;
 import me.tareqalyousef.dynamicshop.Settings;
+import me.tareqalyousef.dynamicshop.TransactionType;
 import me.tareqalyousef.dynamicshop.Util;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -53,9 +54,9 @@ public class BuyCommand implements CommandExecutor {
             return true;
         }
 
-        if(amount > type.getMaxStackSize() * 16) {
+        if(amount > type.getMaxStackSize() * Settings.MAX_QUANTITY_RATIO) {
             player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR +
-                    " Cannot buy more than " + Settings.HIGHLIGHT_COLOR + String.valueOf(type.getMaxStackSize() * 16) + " " +
+                    " Cannot buy more than " + Settings.HIGHLIGHT_COLOR + String.valueOf(type.getMaxStackSize() * Settings.MAX_QUANTITY_RATIO) + " " +
                     name + Settings.DEFAULT_COLOR + " at a time");
 
             return true;
@@ -70,7 +71,7 @@ public class BuyCommand implements CommandExecutor {
             return true;
         }
 
-        totalPrice = Util.quoteItemPrice(strings[0].toUpperCase(), 'b', amount);
+        totalPrice = Util.quoteItemPrice(strings[0].toUpperCase(), TransactionType.BUY, amount);
         if (playerBalance < totalPrice) {
             player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " You do not have " +
                     Settings.MONEY_COLOR + String.format("$%.2f", totalPrice));
@@ -85,7 +86,7 @@ public class BuyCommand implements CommandExecutor {
         }
 
         Util.setPlayerBalance(player.getUniqueId().toString(), playerBalance - totalPrice);
-        Util.setItemPrice(strings[0].toUpperCase(), Util.quoteItemPriceChange(strings[0].toUpperCase(), 'b', amount));
+        Util.setItemPrice(strings[0].toUpperCase(), Util.quoteItemPriceChange(strings[0].toUpperCase(), TransactionType.BUY, amount));
 
         player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " Bought " +
                 Settings.HIGHLIGHT_COLOR + String.valueOf(amount) + " " + Settings.HIGHLIGHT_COLOR + name +

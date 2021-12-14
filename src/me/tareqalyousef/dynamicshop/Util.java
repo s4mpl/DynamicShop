@@ -226,18 +226,18 @@ public class Util {
         return changes;
     }
 
-    public static double quoteItemPrice(String materialName, char mode, int amount) {
+    public static double quoteItemPrice(String materialName, TransactionType mode, int amount) {
         double quote = getItemPrice(materialName);
         double total = 0;
 
-        if (mode == 'b') {
+        if (mode == TransactionType.BUY) {
             for(int i = 0; i < amount; i++) {
                 total += quote;
                 quote *= 1 + Settings.BASE_RATE * Math.pow(getDefaultItemPrice(materialName), Settings.GROWTH_RATE);
             }
 
             return total;
-        } else if (mode == 's') {
+        } else if (mode == TransactionType.SELL) {
             for(int i = 0; i < amount; i++) {
                 total += quote;
                 quote /= 1 + Settings.BASE_RATE * Math.pow(getDefaultItemPrice(materialName), Settings.GROWTH_RATE);
@@ -249,37 +249,41 @@ public class Util {
         }
     }
 
-    public static double quoteItemPriceChange(String materialName, char mode, int amount) {
+    public static double quoteItemPriceChange(String materialName, TransactionType mode, int amount) {
         double quote = getItemPrice(materialName);
 
-        if (mode == 'b') {
+        if (mode == TransactionType.BUY) {
             quote *= Math.pow(1 + Settings.BASE_RATE * Math.pow(getDefaultItemPrice(materialName), Settings.GROWTH_RATE), amount);
-
             return quote;
-        } else if (mode == 's') {
+        } else if (mode == TransactionType.SELL) {
             quote /= Math.pow(1 + Settings.BASE_RATE * Math.pow(getDefaultItemPrice(materialName), Settings.GROWTH_RATE), amount);
-
             return quote;
         } else {
             return -1;
         }
     }
 
+    public static int getInventoryQuantity(Player player, Material material) {
+        int count = 0;
+        for (int i = 0; i < player.getInventory().getSize(); i++)
+            if (player.getInventory().getItem(i) != null && player.getInventory().getItem(i).getType() == material)
+                count += player.getInventory().getItem(i).getAmount();
+        return count;
+    }
+
     // From https://github.com/MarvinKlar/Shop/blob/master/src/mr/minecraft15/shop/commands/ShopCommand.java (genius)
     public static void removeItem(Player p, Material m) {
         for (int i = 0; i < p.getInventory().getSize(); i++) {
-            if (p.getInventory().getItem(i) != null) {
-                if (p.getInventory().getItem(i).getType() == m) {
-                    if (p.getInventory().getItem(i).getAmount() == 1) {
-                        p.getInventory().setItem(i, new ItemStack(Material.AIR));
-                        p.updateInventory();
-                    } else {
-                        p.getInventory().getItem(i).setAmount(p.getInventory().getItem(i).getAmount() - 1);
-                        p.updateInventory();
-                    }
-                    // Avoid bug where it subtracts from all stacks of that material type
-                    return;
+            if (p.getInventory().getItem(i) != null  && p.getInventory().getItem(i).getType() == m) {
+                if (p.getInventory().getItem(i).getAmount() == 1) {
+                    p.getInventory().setItem(i, new ItemStack(Material.AIR));
+                    p.updateInventory();
+                } else {
+                    p.getInventory().getItem(i).setAmount(p.getInventory().getItem(i).getAmount() - 1);
+                    p.updateInventory();
                 }
+                // Avoid bug where it subtracts from all stacks of that material type
+                return;
             }
         }
     }

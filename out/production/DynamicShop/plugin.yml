@@ -2,6 +2,7 @@ name: DynamicShop
 version: 1.0
 author: TareqAlyousef
 main: me.tareqalyousef.dynamicshop.DynamicShop
+api-version: 1.18
 description: A simple shop that adjusts prices based off demand!
 
 commands:
@@ -21,3 +22,5 @@ commands:
     description: Check highest item percentage changes.
   lowest:
     description: Check lowest item percentage changes.
+  quote:
+    description: Quote a price for buying or selling a quantity of an item.

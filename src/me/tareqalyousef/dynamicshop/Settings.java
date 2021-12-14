@@ -7,7 +7,8 @@ import static org.bukkit.Bukkit.getServer;
 public class Settings {
     public static final double SALES_TAX = 0.85;
     public static final double BASE_RATE = 0.0007;
-    public static final double GROWTH_RATE = 0.01;
+    public static final double GROWTH_RATE = 0.225;
+    public static final int MAX_QUANTITY_RATIO = 8;
 
     public static final String DATA_PATH = getServer().getWorldContainer() + "/plugins/DynamicShop";
     public static final String BALANCES_PATH = DATA_PATH + "/balances.yml";

@@ -3,11 +3,14 @@ package me.tareqalyousef.dynamicshop.commands;
 import me.tareqalyousef.dynamicshop.DynamicShop;
 import me.tareqalyousef.dynamicshop.Settings;
 import me.tareqalyousef.dynamicshop.Util;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Base64;
 
 public class PriceCommand implements CommandExecutor {
     private DynamicShop plugin;
