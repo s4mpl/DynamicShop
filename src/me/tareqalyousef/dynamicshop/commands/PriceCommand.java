@@ -25,6 +25,7 @@ public class PriceCommand implements CommandExecutor {
             return true;
 
         Player player = (Player)commandSender;
+
         Material type;
         double price;
 
@@ -37,7 +38,8 @@ public class PriceCommand implements CommandExecutor {
                 return true;
             }
         } catch (Exception e) {
-            player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " Could not parse command");
+            player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR +
+                    " Could not parse command (try " + Settings.HIGHLIGHT_COLOR + "/price <item>" + Settings.DEFAULT_COLOR + ")");
             return false;
         }
 

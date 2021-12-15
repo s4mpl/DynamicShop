@@ -43,7 +43,8 @@ public class BuyCommand implements CommandExecutor {
             name = type.toString().toLowerCase();
             content = new ItemStack(type, Math.min(amount, type.getMaxStackSize()));
         } catch (Exception e) {
-            player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " Could not parse command");
+            player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR +
+                    " Could not parse command (try " + Settings.HIGHLIGHT_COLOR + "/buy <item> <amount>" + Settings.DEFAULT_COLOR + ")");
 
             return false;
         }

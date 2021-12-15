@@ -46,7 +46,8 @@ public class QuoteCommand implements CommandExecutor {
             all = strings[2].equalsIgnoreCase("all") && mode == TransactionType.SELL;
             amount = all ? Util.getInventoryQuantity(player, type) : Integer.parseInt(strings[2]);
         } catch (Exception e) {
-            player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " Could not parse command");
+            player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR +
+                    " Could not parse command (try " + Settings.HIGHLIGHT_COLOR + "/quote [buy | sell] <item> [<amount> | all]" + Settings.DEFAULT_COLOR + ")");
             return false;
         }
 

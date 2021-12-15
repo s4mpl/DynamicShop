@@ -226,6 +226,26 @@ public class Util {
         return changes;
     }
 
+    public static HashMap<String, Double[]> getItemPricesAndChanges() {
+        YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(Util.getDefaultPricesFile());
+        YamlConfiguration pricesConfig = YamlConfiguration.loadConfiguration(Util.getCurrentPricesFile());
+
+        HashMap<String, Double[]> prices = new HashMap<String, Double[]>();
+
+        try {
+            for (String mat : defaultConfig.getKeys(false)) {
+                double price = pricesConfig.getDouble(mat);
+                double ratio = price / defaultConfig.getDouble(mat);
+                Double[] data = {price, ratio};
+                prices.put(mat, data);
+            }
+        } catch (Exception e) {
+            Bukkit.getLogger().info("Could not read prices and price changes");
+        }
+
+        return prices;
+    }
+
     public static double quoteItemPrice(String materialName, TransactionType mode, int amount) {
         double quote = getItemPrice(materialName);
         double total = 0;
