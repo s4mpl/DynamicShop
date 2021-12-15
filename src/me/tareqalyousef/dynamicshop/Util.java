@@ -208,6 +208,18 @@ public class Util {
         }
     }
 
+    public static double getItemPriceChange(String materialName) {
+        File prices = Util.getCurrentPricesFile();
+        File defaults = Util.getDefaultPricesFile();
+        YamlConfiguration config1 = YamlConfiguration.loadConfiguration(prices);
+        YamlConfiguration config2 = YamlConfiguration.loadConfiguration(defaults);
+
+        if (!config1.contains(materialName) || !config2.contains(materialName))
+            return -1;
+
+        return config1.getDouble(materialName) / config2.getDouble(materialName);
+    }
+
     public static HashMap<String, Double> getItemPriceChanges() {
         YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(Util.getDefaultPricesFile());
         YamlConfiguration pricesConfig = YamlConfiguration.loadConfiguration(Util.getCurrentPricesFile());
