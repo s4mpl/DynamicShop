@@ -61,6 +61,11 @@ public class QuoteCommand implements CommandExecutor {
             return true;
         }
 
+        if (Util.getItemPrice(type.toString()) == -1) {
+            player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " You cannot quote this item");
+            return true;
+        }
+
         if (mode == TransactionType.SELL && amount > 2304) {
             player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + " You cannot quote this amount");
             return true;
