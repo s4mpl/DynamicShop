@@ -79,7 +79,7 @@ public class QuoteCommand implements CommandExecutor {
         double finalPrice = Util.quoteItemPriceChange(type.name(), mode, amount);
         double totalPrice = Util.quoteItemPrice(type.name(), mode, amount);
         double change = finalPrice / Util.getItemPrice(type.name());
-        ChatColor changeColor = change >= 1.0 ? ChatColor.GREEN : ChatColor.RED;
+        ChatColor changeColor = change >= 1.0 ? ChatColor.DARK_GREEN : ChatColor.RED;
         String sign = change >= 1.0 ? "+" : "-";
 
         player.sendMessage(Settings.PREFIX_COLOR + plugin.getConfig().getString("prefix") + Settings.DEFAULT_COLOR + (mode == TransactionType.SELL ? " Selling " : " Buying ") +
